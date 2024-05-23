@@ -4,6 +4,10 @@ defmodule Populus.Application do
   @moduledoc false
 
   use Application
+  alias Populus.Servings.NER
+  alias Populus.Servings.Sentiment
+  alias Populus.Servings.QorS
+  alias Populus.Serving.Embeddings
 
   @impl true
   def start(_type, _args) do
@@ -17,6 +21,14 @@ defmodule Populus.Application do
       # Start a worker by calling: Populus.Worker.start_link(arg)
       # {Populus.Worker, arg},
       # Start to serve requests, typically the last entry
+
+      ##############
+      # NxServings #
+      ##############
+      {Nx.Serving, serving: NER.serving(), name: NER.name()},
+      Sentiment.child_spec(),
+      {Nx.Serving, serving: QorS.serving(), name: QorS.name()},
+      # {Nx.Serving, serving: Embeddings.serving(), name: Embeddings.name()},
       PopulusWeb.Endpoint
     ]
 

@@ -1,0 +1,42 @@
+<.header>
+  Listing Project docs
+  <:actions>
+    <.link patch={~p"/project_docs/new"}>
+      <.button>New Project doc</.button>
+    </.link>
+  </:actions>
+</.header>
+
+<.table
+  id="project_docs"
+  rows={@streams.project_docs}
+  row_click={fn {_id, project_doc} -> JS.navigate(~p"/project_docs/#{project_doc}") end}
+>
+  <:col :let={{_id, project_doc}} label="Title"><%= project_doc.title %></:col>
+  <:col :let={{_id, project_doc}} label="Text"><%= project_doc.text %></:col>
+  <:action :let={{_id, project_doc}}>
+    <div class="sr-only">
+      <.link navigate={~p"/project_docs/#{project_doc}"}>Show</.link>
+    </div>
+    <.link patch={~p"/project_docs/#{project_doc}/edit"}>Edit</.link>
+  </:action>
+  <:action :let={{id, project_doc}}>
+    <.link
+      phx-click={JS.push("delete", value: %{id: project_doc.id}) |> hide("##{id}")}
+      data-confirm="Are you sure?"
+    >
+      Delete
+    </.link>
+  </:action>
+</.table>
+
+<.modal :if={@live_action in [:new, :edit]} id="project_doc-modal" show on_cancel={JS.patch(~p"/project_docs")}>
+  <.live_component
+    module={PopulusWeb.ProjectDocLive.FormComponent}
+    id={@project_doc.id || :new}
+    title={@page_title}
+    action={@live_action}
+    project_doc={@project_doc}
+    patch={~p"/project_docs"}
+  />
+</.modal>

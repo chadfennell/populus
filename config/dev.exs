@@ -2,6 +2,7 @@ import Config
 
 # Configure your database
 config :populus, Populus.Repo,
+  types: Populus.PostgrexTypes,
   username: "postgres",
   password: "postgres",
   hostname: "localhost",

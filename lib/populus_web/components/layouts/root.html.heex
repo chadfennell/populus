@@ -12,6 +12,171 @@
     </script>
   </head>
   <body class="bg-white antialiased">
+    <%= if @current_user do %>
+      <header class="bg-white">
+        <nav
+          class="mx-auto flex max-w-7xl items-center justify-between p-6 lg:px-8"
+          aria-label="Global"
+        >
+          <div class="flex lg:flex-1"></div>
+          <div class="flex lg:hidden">
+            <button
+              type="button"
+              class="-m-2.5 inline-flex items-center justify-center rounded-md p-2.5 text-gray-700"
+              aria-controls="mobile-menu"
+              aria-expanded="false"
+            >
+              <span class="sr-only">Open main menu</span>
+              <svg
+                class="h-6 w-6"
+                fill="none"
+                viewBox="0 0 24 24"
+                stroke-width="1.5"
+                stroke="currentColor"
+                aria-hidden="true"
+              >
+                <path
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                  d="M3.75 6.75h16.5M3.75 12h16.5m-16.5 5.25h16.5"
+                />
+              </svg>
+            </button>
+          </div>
+          <div class="hidden lg:flex lg:gap-x-12">
+            <div class="relative">
+              <.link
+                id="questions-link"
+                navigate={~p"/questions"}
+                class="flex items-center gap-x-1 text-sm font-semibold leading-6 text-gray-90"
+              >
+                Questions
+              </.link>
+            </div>
+            <.link
+              id="questions-link"
+              navigate={~p"/comments"}
+              class="flex items-center gap-x-1 text-sm font-semibold leading-6 text-gray-90"
+            >
+              Comments
+            </.link>
+
+            <.link
+              id="questions-link"
+              navigate={~p"/project_docs"}
+              class="flex items-center gap-x-1 text-sm font-semibold leading-6 text-gray-90"
+            >
+              Project Docs
+            </.link>
+          </div>
+          <div class="hidden lg:flex lg:flex-1 lg:justify-end">
+                <.link
+                    href={~p"/users/log_out"}
+                    method="delete"
+                    class="text-sm font-semibold leading-6 text-gray-900"
+                  >
+                    Log out <span aria-hidden="true">&rarr;</span>
+                  </.link>
+          </div>
+        </nav>
+        <!-- Mobile menu, show/hide based on menu open state. -->
+        <div class="lg:hidden hidden" id="mobile-menu" role="dialog" aria-modal="true">
+          <div class="fixed inset-0 z-10"></div>
+          <div class="fixed inset-y-0 right-0 z-10 w-full overflow-y-auto bg-white px-6 py-6 sm:max-w-sm sm:ring-1 sm:ring-gray-900/10">
+            <div class="flex items-center justify-between">
+              <a href="#" class="-m-1.5 p-1.5">
+                <span class="sr-only">Your Company</span>
+                <img
+                  class="h-8 w-auto"
+                  src="https://tailwindui.com/img/logos/mark.svg?color=indigo&shade=600"
+                  alt=""
+                />
+              </a>
+              <button
+                type="button"
+                class="-m-2.5 rounded-md p-2.5 text-gray-700"
+                aria-controls="mobile-menu"
+                aria-expanded="false"
+              >
+                <span class="sr-only">Close menu</span>
+                <svg
+                  class="h-6 w-6"
+                  fill="none"
+                  viewBox="0 0 24 24"
+                  stroke-width="1.5"
+                  stroke="currentColor"
+                  aria-hidden="true"
+                >
+                  <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12" />
+                </svg>
+              </button>
+            </div>
+            <div class="mt-6 flow-root">
+              <div class="-my-6 divide-y divide-gray-500/10">
+                <div class="space-y-2 py-6">
+                  <div class="relative">
+                    <.link
+                      id="questions-link"
+                      navigate={~p"/questions"}
+                      class="flex items-center gap-x-1 text-sm font-semibold leading-6 text-gray-90"
+                    >
+                      Questions
+                    </.link>
+                  </div>
+                  <.link
+                    id="questions-link"
+                    navigate={~p"/comments"}
+                    class="flex items-center gap-x-1 text-sm font-semibold leading-6 text-gray-90"
+                  >
+                    Comments
+                  </.link>
+
+                  <.link
+                    id="questions-link"
+                    navigate={~p"/project_docs"}
+                    class="flex items-center gap-x-1 text-sm font-semibold leading-6 text-gray-90"
+                  >
+                    Project Docs
+                  </.link>
+                </div>
+                <div class="py-6 grid grid-col">
+                  <.link
+                    href={~p"/users/settings"}
+                    class="text-[0.8125rem] leading-6 text-zinc-900 font-semibold hover:text-zinc-700"
+                  >
+                    Settings
+                  </.link>
+
+                  <.link
+                    href={~p"/users/log_out"}
+                    method="delete"
+                    class="text-[0.8125rem] leading-6 text-zinc-900 font-semibold hover:text-zinc-700"
+                  >
+                    Log out
+                  </.link>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </header>
+    <% end %>
     <%= @inner_content %>
+    <script>
+      document.addEventListener('DOMContentLoaded', function () {
+        const mobileMenuButton = document.querySelector('button[aria-controls="mobile-menu"]');
+        const closeMenuButton = document.querySelector('button[aria-controls="mobile-menu"] .sr-only');
+        const mobileMenu = document.getElementById('mobile-menu');
+
+        const toggleMenu = () => {
+          const isExpanded = mobileMenuButton.getAttribute('aria-expanded') === 'true';
+          mobileMenuButton.setAttribute('aria-expanded', !isExpanded);
+          mobileMenu.classList.toggle('hidden');
+        };
+
+        mobileMenuButton.addEventListener('click', toggleMenu);
+        closeMenuButton.parentElement.addEventListener('click', toggleMenu);
+      });
+    </script>
   </body>
 </html>

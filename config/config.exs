@@ -7,9 +7,17 @@
 # General application configuration
 import Config
 
+config :flop, repo: Populus.Repo
+
+config :nx, default_backend: EXLA.Backend
+
+config :populus, :deep_infra,
+  api_key: System.get_env("POPULUS_DEEPINFRA_API_KEY")
+
 config :populus,
   ecto_repos: [Populus.Repo],
-  generators: [timestamp_type: :utc_datetime, binary_id: true]
+  generators: [timestamp_type: :utc_datetime, binary_id: true],
+  migration_timestamps: [type: :utc_datetime_usec]
 
 # Configures the endpoint
 config :populus, PopulusWeb.Endpoint,

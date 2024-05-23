@@ -1,0 +1,75 @@
+<.header>
+  Listing Questions
+  <:actions>
+    <.link patch={~p"/questions/new"}>
+      <.button>New Question</.button>
+    </.link>
+  </:actions>
+</.header>
+
+<div class="mb-10">
+  <.filter_form
+    fields={[
+      body: [
+        label: gettext("Question"),
+        op: :ilike,
+        type: "text"
+      ],
+      response: [
+        label: gettext("Response"),
+        op: :ilike,
+        type: "text"
+      ],
+      negative: [
+        op: :>=,
+        type: "button",
+        label: gettext("Negative At Least 0.8"),
+        on_value: "0.8",
+        off_value: "0.0",
+        on_icon: "face-frown",
+        off_icon: "x-circle",
+        on_text: gettext("Filter By Highly Negative"),
+        off_text: gettext("Remove Negativity Filter")
+
+      ]
+    ]}
+    meta={@meta}
+    id="question-filter-form"
+  >
+  </.filter_form>
+</div>
+
+<div :for={question <- @questions} class="grid grid-cols-2 gap-4 mb-5 rounded shadow-md p-5">
+  <div>
+    <h3 class="mb-3 text-base font-semibold leading-6 text-gray-900">Question
+    <div class="inline-flex items-center rounded-md bg-red-50 px-2 py-1 text-xs font-medium text-red-700 ring-1 ring-inset ring-red-600/10">
+    Negativity <%= question.negative %>
+    </div></h3>
+
+    <%= question.body %>
+
+
+  </div>
+  <div>
+    <h3 class="mb-3 t text-base font-semibold leading-6 text-gray-900">Response</h3>
+    <%= question.response %>
+  </div>
+</div>
+
+<Flop.Phoenix.pagination meta={@meta} path={~p"/questions"} />
+
+<.modal
+  :if={@live_action in [:new, :edit]}
+  id="question-modal"
+  show
+  on_cancel={JS.patch(~p"/questions")}
+>
+  <.live_component
+    module={PopulusWeb.QuestionLive.FormComponent}
+    id={@question.id || :new}
+    title={@page_title}
+    action={@live_action}
+    question={@question}
+    patch={~p"/questions"}
+  />
+</.modal>

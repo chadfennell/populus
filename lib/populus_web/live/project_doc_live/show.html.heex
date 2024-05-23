@@ -1,0 +1,28 @@
+<.header>
+  Project doc <%= @project_doc.id %>
+  <:subtitle>This is a project_doc record from your database.</:subtitle>
+  <:actions>
+    <.link patch={~p"/project_docs/#{@project_doc}/show/edit"} phx-click={JS.push_focus()}>
+      <.button>Edit project_doc</.button>
+    </.link>
+  </:actions>
+</.header>
+
+<.list>
+  <:item title="Embedding"><%= @project_doc.embedding %></:item>
+  <:item title="Title"><%= @project_doc.title %></:item>
+  <:item title="Text"><%= @project_doc.text %></:item>
+</.list>
+
+<.back navigate={~p"/project_docs"}>Back to project_docs</.back>
+
+<.modal :if={@live_action == :edit} id="project_doc-modal" show on_cancel={JS.patch(~p"/project_docs/#{@project_doc}")}>
+  <.live_component
+    module={PopulusWeb.ProjectDocLive.FormComponent}
+    id={@project_doc.id}
+    title={@page_title}
+    action={@live_action}
+    project_doc={@project_doc}
+    patch={~p"/project_docs/#{@project_doc}"}
+  />
+</.modal>

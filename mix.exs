@@ -25,6 +25,7 @@ defmodule Populus.MixProject do
 
   # Specifies which paths to compile per environment.
   defp elixirc_paths(:test), do: ["lib", "test/support"]
+  defp elixirc_paths(:dev), do: ["lib", "test/support"]
   defp elixirc_paths(_), do: ["lib"]
 
   # Specifies your project dependencies.
@@ -32,6 +33,7 @@ defmodule Populus.MixProject do
   # Type `mix help deps` for examples and options.
   defp deps do
     [
+      {:bcrypt_elixir, "~> 3.0"},
       {:phoenix, "~> 1.7.11"},
       {:phoenix_ecto, "~> 4.4"},
       {:ecto_sql, "~> 3.10"},
@@ -59,7 +61,11 @@ defmodule Populus.MixProject do
       {:dns_cluster, "~> 0.1.1"},
       {:bandit, "~> 1.2"},
       {:bumblebee, "~> 0.5.3"},
-      {:exla, ">= 0.0.0"}
+      {:exla, ">= 0.0.0"},
+      {:pgvector, "~> 0.2.0"},
+      {:faker, "~> 0.18", only: [:test, :dev]},
+      {:flop, "~> 0.25.0"},
+      {:flop_phoenix, "~> 0.22.9"}
     ]
   end
 

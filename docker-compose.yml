@@ -1,0 +1,16 @@
+version: "3.3"
+services:
+  postgres:
+    image: pgvector/pgvector:pg16
+    volumes:
+      - db-data-pg-16:/var/lib/pgvector_16/data
+    environment:
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=postgres
+    ports:
+      - "127.0.0.1:5432:5432"
+    command: [ "postgres", "-c", "log_statement=all" ]
+
+volumes:
+  db-data-pg-16:
+    driver: local
