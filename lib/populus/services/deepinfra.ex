@@ -17,13 +17,9 @@ defmodule Populus.Services.DeepInfra do
       {"Authorization", "Bearer #{bearer_token}"}
     ]
 
-    formatted_text = prompt_format(text)
-
-    prompt = %{"inputs" => [formatted_text]} |> Jason.encode!()
-
     options = [receive_timeout: 20_000]
 
-    case Finch.build(:post, api_url, headers, prompt)
+    case Finch.build(:post, api_url, headers, text)
          |> Finch.request(Populus.Finch, options) do
       {:ok, %Response{status: 200, body: body}} ->
         {:ok, body, text}
@@ -36,9 +32,5 @@ defmodule Populus.Services.DeepInfra do
         Logger.error("Request failed: #{inspect(reason)}")
         {:error, "Request failed: #{inspect(reason)}"}
     end
-  end
-
-  defp prompt_format(text) do
-    Regex.replace(~r/\n|'|"/, text, "")
   end
 end

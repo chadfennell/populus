@@ -10,5 +10,7 @@ defmodule Populus.Repo.Migrations.CreateProjectDocsTable do
 
       timestamps()
     end
+
+    create index(:project_docs, ["embeddings vector_l2_ops"], using: :ivfflat, options: "lists = 100")
   end
 end

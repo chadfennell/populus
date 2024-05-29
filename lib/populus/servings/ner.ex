@@ -11,6 +11,10 @@ defmodule Populus.Servings.NER do
     ServingNER
   end
 
+  def child_spec() do
+    {Nx.Serving, serving: serving(), name: name()}
+  end
+
   def serving() do
     Bumblebee.Text.token_classification(
       load_model({:hf, "dslim/bert-base-NER"}),
@@ -20,6 +24,7 @@ defmodule Populus.Servings.NER do
   end
 
   def predict(text) do
-    predict(name(), text)
+    %{entities: entities} = predict(name(), text)
+    %{named_entities: Enum.map(entities, & &1.phrase)}
   end
 end

@@ -11,6 +11,10 @@ defmodule Populus.Servings.QorS do
     ServingQorS
   end
 
+  def child_spec() do
+    {Nx.Serving, serving: serving(), name: name()}
+  end
+
   def serving() do
     Bumblebee.Text.text_classification(
       load_model({:hf, "shahrukhx01/question-vs-statement-classifier"}),

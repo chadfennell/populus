@@ -1,12 +1,26 @@
 defmodule PopulusWeb.CommentLive.Index do
   use PopulusWeb, :live_view
-  import Populus.Components.Forms
   alias Populus.Comments
   alias Populus.Comments.Comment
+  import Populus.Components.Forms
 
   @impl true
   def mount(_params, _session, socket) do
-    {:ok, stream(socket, :comments, Comments.list_comments())}
+    {:ok, stream(socket, :comments, [])}
+  end
+
+  @impl true
+  def handle_params(params, _, %{assigns: %{live_action: :index}} = socket) do
+    case Comments.list_comments(params) do
+      {:ok, {comments, meta}} ->
+        {:noreply, assign(socket, %{comments: comments, meta: meta})}
+
+      {:error, _meta} ->
+        # This will reset invalid parameters. Alternatively, you can assign
+        # only the meta and render the errors, or you can ignore the error
+        # case entirely.
+        {:noreply, push_navigate(socket, to: ~p"/questions")}
+    end
   end
 
   @impl true
@@ -43,5 +57,15 @@ defmodule PopulusWeb.CommentLive.Index do
     {:ok, _} = Comments.delete_comment(comment)
 
     {:noreply, stream_delete(socket, :comments, comment)}
+  end
+
+  def handle_event("update-filter", %{"reset" => _reset} = _params, socket) do
+    {:noreply, push_patch(socket, to: ~p"/comments")}
+  end
+
+  def handle_event("update-filter", params, socket) do
+    IO.inspect(params)
+    params = Map.delete(params, "_target")
+    {:noreply, push_patch(socket, to: ~p"/comments?#{params}")}
   end
 end

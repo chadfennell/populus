@@ -7,7 +7,6 @@ defmodule Populus.Application do
   alias Populus.Servings.NER
   alias Populus.Servings.Sentiment
   alias Populus.Servings.QorS
-  alias Populus.Serving.Embeddings
 
   @impl true
   def start(_type, _args) do
@@ -25,10 +24,9 @@ defmodule Populus.Application do
       ##############
       # NxServings #
       ##############
-      {Nx.Serving, serving: NER.serving(), name: NER.name()},
+      NER.child_spec(),
       Sentiment.child_spec(),
-      {Nx.Serving, serving: QorS.serving(), name: QorS.name()},
-      # {Nx.Serving, serving: Embeddings.serving(), name: Embeddings.name()},
+      QorS.child_spec(),
       PopulusWeb.Endpoint
     ]
 

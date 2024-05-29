@@ -1,37 +1,62 @@
-<.header>
-  Listing Comments
-  <:actions>
-    <.link patch={~p"/comments/new"}>
-      <.button>New Comment</.button>
-    </.link>
-  </:actions>
-</.header>
+<div class="mb-10">
+  <.filter_form
+    fields={[
+      body: [
+        label: gettext("Search Text"),
+        op: :ilike,
+        type: "text"
+      ],
+      negative: [
+        op: :>=,
+        type: "button",
+        label: gettext("Highly Negative (neg >= 0.8)"),
+        value: "0.8"
+      ],
+      positive: [
+        op: :>=,
+        type: "button",
+        label: gettext("Highly Positive (pos >= 0.8)"),
+        value: "0.8"
+      ]
+    ]}
+    meta={@meta}
+    id="question-filter-form"
+  >
+  </.filter_form>
+</div>
 
-<.table
-  id="comments"
-  rows={@streams.comments}
-  row_click={fn {_id, comment} -> JS.navigate(~p"/comments/#{comment}") end}
+<div
+  :for={comment <- @comments}
+  id={"comment-#{comment.id}"}
+  class="grid grid-cols-2 gap-4 mb-5 rounded shadow-md p-5"
 >
-  <:col :let={{_id, comment}} label="Body"><%= comment.body %></:col>
-  <:col :let={{_id, comment}} label="Negative"><%= comment.negative %></:col>
-  <:col :let={{_id, comment}} label="Neutral"><%= comment.neutral %></:col>
-  <:col :let={{_id, comment}} label="Positive"><%= comment.positive %></:col>
-  <:col :let={{_id, comment}} label="Named entities"><%= comment.named_entities %></:col>
-  <:action :let={{_id, comment}}>
-    <div class="sr-only">
-      <.link navigate={~p"/comments/#{comment}"}>Show</.link>
-    </div>
-    <.link patch={~p"/comments/#{comment}/edit"}>Edit</.link>
-  </:action>
-  <:action :let={{id, comment}}>
+  <div>
+    <h3 class="mb-3 text-base font-semibold leading-6 text-gray-900">
+      Comment
+      <div class="inline-flex items-center rounded-md bg-red-50 px-2 py-1 text-xs font-medium text-red-700 ring-1 ring-inset ring-red-600/10">
+        Negativity <%= comment.negative |> :erlang.float_to_binary([{:decimals, 3}, :compact]) %>
+      </div>
+
+      <div class="inline-flex items-center rounded-md bg-yellow-50 px-2 py-1 text-xs font-medium text-yellow-800 ring-1 ring-inset ring-yellow-600/20">
+        Positivity <%= comment.positive |> :erlang.float_to_binary([{:decimals, 3}, :compact]) %>
+      </div>
+    </h3>
+
+    <%= comment.body %>
+  </div>
+
+  <div class="mt-6 flex items-center justify-end gap-x-6">
+    <.link patch={~p"/comments/#{comment}/edit"}>
+      <.icon name="hero-pencil" class="ml-1 w-5 h-5" />
+    </.link>
     <.link
-      phx-click={JS.push("delete", value: %{id: comment.id}) |> hide("##{id}")}
+      phx-click={JS.push("delete", value: %{id: comment.id}) |> hide("#comment-#{comment.id}")}
       data-confirm="Are you sure?"
     >
-      Delete
+      <.icon name="hero-trash" class="ml-1 w-5 h-5" />
     </.link>
-  </:action>
-</.table>
+  </div>
+</div>
 
 <.modal :if={@live_action in [:new, :edit]} id="comment-modal" show on_cancel={JS.patch(~p"/comments")}>
   <.live_component

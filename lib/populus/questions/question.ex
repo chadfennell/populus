@@ -4,8 +4,13 @@ defmodule Populus.Questions.Question do
 
   @derive {
     Flop.Schema,
-    filterable: [:body, :response, :positive, :negative, :neutral],
-    sortable: [:positive, :negative, :neutral]
+    filterable: [:text_fields, :named_entities, :positive, :negative, :neutral],
+    sortable: [:positive, :negative, :neutral],
+    adapter_opts: [
+      compound_fields: [text_fields: [:body, :response]]
+    ],
+    max_limit: 100,
+    default_limit: 500
   }
 
   @primary_key {:id, :binary_id, autogenerate: true}

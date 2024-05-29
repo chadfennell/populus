@@ -1,0 +1,177 @@
+<!--
+  This example requires some changes to your config:
+  
+  ```
+  // tailwind.config.js
+  module.exports = {
+    // ...
+    plugins: [
+      // ...
+      require('@tailwindcss/forms'),
+    ],
+  }
+  ```
+-->
+<div class="flex flex-col flex-1">
+  <div>
+    <h3 class="mb-3 text-base font-semibold leading-6 text-gray-900">
+      Test Console <.icon name="hero-chat-bubble-left-ellipsis" class="ml-1 w-5 h-5" />
+    </h3>
+    <form phx-submit="post" class="relative">
+      <div class="h-full overflow-hidden rounded-lg shadow-sm ring-1 ring-inset ring-gray-300 focus-within:ring-2 focus-within:ring-indigo-600">
+        <label for="message" class="sr-only">Test a message...</label>
+        <textarea
+          rows="3"
+          name="message"
+          id="message"
+          class="h-full block w-full resize-none border-0 bg-transparent py-1.5 text-gray-900 placeholder:text-gray-400 focus:ring-0 sm:text-sm sm:leading-6"
+          placeholder="Test a message..."
+        ></textarea>
+        <!-- Spacer element to match the height of the toolbar -->
+        <div class="py-2" aria-hidden="true">
+          <!-- Matches height of button in toolbar (1px border + 36px content height) -->
+          <div class="py-px">
+            <div class="h-9"></div>
+          </div>
+        </div>
+      </div>
+
+      <div class="absolute inset-x-0 bottom-0 flex justify-between py-2 pl-3 pr-2">
+        <div class="flex items-center space-x-5"></div>
+        <div class="flex-shrink-0">
+          <button
+            type="submit"
+            class="inline-flex items-center rounded-md bg-indigo-600 px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600"
+          >
+            Post
+          </button>
+        </div>
+      </div>
+    </form>
+  </div>
+
+  <div :if={@result}>
+    <h3 class="mt-10 mb-5 text-base font-semibold leading-6 text-gray-900">
+      Activity <.icon name="hero-bolt" class="ml-1 w-5 h-5" />
+    </h3>
+    <div class="border-2 border-zinc-200 rounded p-5 mb-5 ">
+      <div :if={@result.loading}>
+        <button
+          type="button"
+          class="inline-flex items-center px-4 py-2 font-semibold leading-6 text-sm shadow rounded-md text-white bg-indigo-500 hover:bg-indigo-400 transition ease-in-out duration-150 cursor-not-allowed"
+          disabled=""
+        >
+          <svg
+            class="animate-spin -ml-1 mr-3 h-5 w-5 text-white"
+            xmlns="http://www.w3.org/2000/svg"
+            fill="none"
+            viewBox="0 0 24 24"
+          >
+            <circle
+              class="opacity-25"
+              cx="12"
+              cy="12"
+              r="10"
+              stroke="currentColor"
+              stroke-width="4"
+            >
+            </circle>
+            <path
+              class="opacity-75"
+              fill="currentColor"
+              d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
+            >
+            </path>
+          </svg>
+          Processing...
+        </button>
+      </div>
+      <div :if={org = @result.ok? && @result.result}>
+        <%= case @result.result do %>
+          <% %Populus.Questions.Question{} = question -> %>
+            <div class="flex flex-col">
+              <div>
+                <h3 class="mb-3 text-base font-semibold leading-6 text-gray-900">
+                  Question
+                  <div class="inline-flex items-center rounded-md bg-red-50 px-2 py-1 text-xs font-medium text-red-700 ring-1 ring-inset ring-red-600/10">
+                    Negativity <%= question.negative
+                    |> :erlang.float_to_binary([{:decimals, 3}, :compact]) %>
+                  </div>
+
+                  <div class="inline-flex items-center rounded-md bg-yellow-50 px-2 py-1 text-xs font-medium text-yellow-800 ring-1 ring-inset ring-yellow-600/20">
+                    Positivity <%= question.positive
+                    |> :erlang.float_to_binary([{:decimals, 3}, :compact]) %>
+                  </div>
+                </h3>
+
+                <%= question.body %>
+              </div>
+              <div>
+                <h3 class="mb-3 t text-base font-semibold leading-6 text-gray-900">Response</h3>
+                <%= question.response %>
+              </div>
+              <div>
+                <.link patch={~p"/questions/#{question}/edit"}></.link>
+              </div>
+
+              <div class="mt-6 flex items-center justify-end gap-x-6">
+                <.link patch={~p"/questions/#{question}/edit"}>
+                  <.icon name="hero-pencil" class="ml-1 w-5 h-5" />
+                </.link>
+                <.link
+                  phx-click={
+                    JS.push("delete", value: %{id: question.id})
+                    |> hide("#question-#{question.id}")
+                  }
+                  data-confirm="Are you sure?"
+                >
+                  <.icon name="hero-trash" class="ml-1 w-5 h-5" />
+                </.link>
+              </div>
+            </div>
+          <% %Populus.Comments.Comment{} = comment -> %>
+            <div>
+              <h3 class="mb-3 text-base font-semibold leading-6 text-gray-900">
+                Comment
+                <div class="inline-flex items-center rounded-md bg-red-50 px-2 py-1 text-xs font-medium text-red-700 ring-1 ring-inset ring-red-600/10">
+                  Negativity <%= comment.negative
+                  |> :erlang.float_to_binary([{:decimals, 3}, :compact]) %>
+                </div>
+
+                <div class="inline-flex items-center rounded-md bg-yellow-50 px-2 py-1 text-xs font-medium text-yellow-800 ring-1 ring-inset ring-yellow-600/20">
+                  Positivity <%= comment.positive
+                  |> :erlang.float_to_binary([{:decimals, 3}, :compact]) %>
+                </div>
+              </h3>
+
+              <div>
+                <h3 class="mb-3 t text-base font-semibold leading-6 text-gray-900">Comment</h3>
+                <%= comment.body %>
+              </div>
+
+              <div>
+                <h3 class="mb-3 t text-base font-semibold leading-6 text-gray-900">
+                  Response (Standard)
+                </h3>
+                "Your comment has been recorded and will be routed to the appropriate party. Thank you!"
+              </div>
+            </div>
+
+            <div class="mt-6 flex items-center justify-end gap-x-6">
+              <.link patch={~p"/comments/#{comment}/edit"}>
+                <.icon name="hero-pencil" class="ml-1 w-5 h-5" />
+              </.link>
+              <.link
+                phx-click={
+                  JS.push("delete", value: %{id: comment.id}) |> hide("#comment-#{comment.id}")
+                }
+                data-confirm="Are you sure?"
+              >
+                <.icon name="hero-trash" class="ml-1 w-5 h-5" />
+              </.link>
+            </div>
+        <% end %>
+      </div>
+    </div>
+  </div>
+</div>

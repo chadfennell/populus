@@ -18,7 +18,11 @@
           class="mx-auto flex max-w-7xl items-center justify-between p-6 lg:px-8"
           aria-label="Global"
         >
-          <div class="flex lg:flex-1"></div>
+          <div class="flex lg:flex-1">
+            <a href="/">
+              <img class="h-12" src="/images/logo.png" alt="Your Company" />
+            </a>
+          </div>
           <div class="flex lg:hidden">
             <button
               type="button"
@@ -68,15 +72,25 @@
             >
               Project Docs
             </.link>
+
+            <.link
+              id="questions-link"
+              navigate={~p"/simulator"}
+              class="flex items-center gap-x-1 text-sm font-semibold leading-6 text-gray-90"
+            >
+              Simulator
+                      <.icon name="hero-beaker" class="ml-1 h-5 w-5" />
+
+            </.link>
           </div>
           <div class="hidden lg:flex lg:flex-1 lg:justify-end">
-                <.link
-                    href={~p"/users/log_out"}
-                    method="delete"
-                    class="text-sm font-semibold leading-6 text-gray-900"
-                  >
-                    Log out <span aria-hidden="true">&rarr;</span>
-                  </.link>
+            <.link
+              href={~p"/users/log_out"}
+              method="delete"
+              class="text-sm font-semibold leading-6 text-gray-900 absolute top-5 right-10"
+            >
+              Log out <span aria-hidden="true">&rarr;</span>
+            </.link>
           </div>
         </nav>
         <!-- Mobile menu, show/hide based on menu open state. -->

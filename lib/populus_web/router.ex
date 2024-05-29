@@ -17,11 +17,6 @@ defmodule PopulusWeb.Router do
     plug :accepts, ["json"]
   end
 
-  scope "/", PopulusWeb do
-    pipe_through :browser
-
-    get "/", PageController, :home
-  end
 
   # Just playing with Bumblebee etc rn - a playground
   scope "/", PopulusWeb do
@@ -63,6 +58,7 @@ defmodule PopulusWeb.Router do
       live "/users/log_in", UserLoginLive, :new
       live "/users/reset_password", UserForgotPasswordLive, :new
       live "/users/reset_password/:token", UserResetPasswordLive, :edit
+      get "/", PageController, :home
     end
 
     post "/users/log_in", UserSessionController, :create
@@ -94,6 +90,8 @@ defmodule PopulusWeb.Router do
 
       live "/project_docs/:id", ProjectDocLive.Show, :show
       live "/project_docs/:id/show/edit", ProjectDocLive.Show, :edit
+
+      live "/simulator", Simulator
     end
   end
 

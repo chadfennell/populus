@@ -1,7 +1,6 @@
 defmodule Populus.Servings do
-  @callback serving() :: Nx.Serving.t()
+  @callback child_spec() :: {Nx.Serving.t(), serving: Nx.Serving.t(), name: :atom}
   @callback predict(String.t()) :: term
-  @callback name() :: atom()
 
   def load_model(model) do
     {:ok, model_info} = Bumblebee.load_model(model)

@@ -2,11 +2,23 @@ defmodule Populus.ProjectDocs do
   @moduledoc """
   The ProjectDocs context.
   """
-
   import Ecto.Query, warn: false
-  alias Populus.Repo
+  import Pgvector.Ecto.Query
 
   alias Populus.ProjectDocs.ProjectDoc
+  alias Populus.Repo
+
+  def rag_suggestions(text) do
+    {:ok, embeddings} = Populus.Services.Embeddings.generate(text)
+
+    from(
+      pd in ProjectDoc,
+      select: pd.text,
+      order_by: l2_distance(pd.embeddings, ^embeddings),
+      limit: 1
+    )
+    |> Repo.all()
+  end
 
   @doc """
   Returns the list of project_docs.

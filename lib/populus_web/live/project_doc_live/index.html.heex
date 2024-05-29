@@ -13,7 +13,7 @@
   row_click={fn {_id, project_doc} -> JS.navigate(~p"/project_docs/#{project_doc}") end}
 >
   <:col :let={{_id, project_doc}} label="Title"><%= project_doc.title %></:col>
-  <:col :let={{_id, project_doc}} label="Text"><%= project_doc.text %></:col>
+  <:col :let={{_id, project_doc}} label="Text"><div class="text-ellipsis overflow-hidden h-48"><%= project_doc.text %></div></:col>
   <:action :let={{_id, project_doc}}>
     <div class="sr-only">
       <.link navigate={~p"/project_docs/#{project_doc}"}>Show</.link>

@@ -63,6 +63,7 @@ defmodule PopulusWeb.QuestionLive.Index do
   end
 
   def handle_event("update-filter", params, socket) do
+    IO.inspect(params)
     params = Map.delete(params, "_target")
     {:noreply, push_patch(socket, to: ~p"/questions?#{params}")}
   end

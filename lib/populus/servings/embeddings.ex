@@ -11,6 +11,10 @@ defmodule Populus.Serving.Embeddings do
     ServingEmbedding
   end
 
+  def child_spec() do
+    {Nx.Serving, serving: serving(), name: name()}
+  end
+
   def serving() do
     Bumblebee.Text.text_embedding(
       load_model({:hf, "intfloat/e5-large-v2"}),

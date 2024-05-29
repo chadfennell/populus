@@ -8,6 +8,34 @@ defmodule Populus.Questions do
 
   alias Populus.Questions.Question
 
+  def record_question(question) do
+    %{sentiment: sentiment_attrs} = Populus.Servings.Sentiment.predict(question)
+    entities = Populus.Servings.NER.predict(question)
+    {:ok, response} = answer(question)
+
+    %{body: question, response: response}
+    |> Map.merge(sentiment_attrs)
+    |> Map.merge(entities)
+    |> IO.inspect()
+    |> create_question()
+  end
+
+  def question?(prompt) do
+    %{q_or_s: %{question: q, statement: s}} = Populus.Servings.QorS.predict(prompt)
+
+    # We need a second check to handle cases like:
+    # "I need info on project xzy" Mixtral will code these as a
+    # question. Our service tends to miss these.
+    q > s || Populus.Services.QorS.predict(prompt) == {:ok, :question}
+  end
+
+  def answer(prompt) do
+    prompt
+    |> Populus.ProjectDocs.rag_suggestions()
+    |> Enum.join("\n")
+    |> Populus.Services.Rag.generate(prompt)
+  end
+
   @doc """
   Returns the list of questions.
 

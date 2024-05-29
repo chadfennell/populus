@@ -8,6 +8,16 @@ defmodule Populus.Comments do
 
   alias Populus.Comments.Comment
 
+  def record_comment(comment) do
+    %{sentiment: sentiment_attrs} = Populus.Servings.Sentiment.predict(comment)
+    entities = Populus.Servings.NER.predict(comment)
+
+    %{body: comment}
+    |> Map.merge(sentiment_attrs)
+    |> Map.merge(entities)
+    |> create_comment()
+  end
+
   @doc """
   Returns the list of comments.
 
@@ -17,8 +27,8 @@ defmodule Populus.Comments do
       [%Comment{}, ...]
 
   """
-  def list_comments do
-    Repo.all(Comment)
+  def list_comments(params) do
+    Flop.validate_and_run(Comment, params, for: Comment)
   end
 
   @doc """

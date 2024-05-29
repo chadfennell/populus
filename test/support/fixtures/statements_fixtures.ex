@@ -16,7 +16,7 @@ defmodule Populus.StatementsFixtures do
         neutral: 120.5,
         positive: 120.5
       })
-      |> Populus.Statements.create_statement()
+      |> Populus.Servings.Sentiment.predict()
 
     statement
   end
